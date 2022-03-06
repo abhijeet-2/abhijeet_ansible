@@ -1,0 +1,7 @@
+---
+- name: Playbook to install Nginx Container on server 
+  hosts: docker
+  become: true
+   
+  roles:
+    - backends_nginx-logrotate

@@ -1,0 +1,44 @@
+---
+- name: create directory for nginx-logrotate
+  file:
+     path: /tmp/nginx-logrotate
+     state: directory
+     
+- name: Copy the nginx conf template
+  template:
+    src: "nginx.conf.j2"
+    dest: "/tmp/nginx-logrotate/nginx.conf"
+  
+- name: Copy the nginx logrotate template
+  template:
+    src: "nginx.j2"
+    dest: "/tmp/nginx-logrotate/ngnix"
+
+- name: Copy the Dockerfile template
+  template:
+    src: "Dockerfile.j2"
+    dest: "/tmp/nginx-logrotate/Dockerfile"
+
+- name: Build Docker nginx image from Dockerfile 
+  docker_image:
+    name: nginx-image
+    tag: v1
+    path: /tmp/nginx-logrotate
+    state: build 
+
+- name: Deploy nginx docker container
+  docker_container:
+    image: nginx-image:v1
+    name: myngix
+    state: started
+    ports:
+      - "8080:80"
+
+    
+# - name: deploy nginx docker container
+#   docker_container:
+#     image: nginx:stable
+#     name: nginx
+#     state: started
+#     ports:
+#       - "8080:80"
